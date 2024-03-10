@@ -15,37 +15,28 @@ import {
 } from "@chakra-ui/react";
 import { mutate } from 'swr';
 import { useQueries } from '@/hooks/useQueries';
+import { useMutation } from '@/hooks/useMutation';
 
 const EditModal = ({ isOpen, onClose, editingNote, onEditNoteSuccess }) => {
-  const [editedNote, setEditedNote] = useState({});
-  // const { data: editedNote } = useQueries({ prefixUrl: `/api/notes/${editingNote.id}` });
-
+  const [notes, setNotes] = useState({});
 
   useEffect(() => {
-    setEditedNote(editingNote);
+    setNotes(editingNote);
   }, [editingNote]);
 
-  // const { data: listNotesQueries } = useQueries({ prefixUrl: editedNote.id ? `/api/notes/${editedNote.id}` : `` }, {
-  //   onSuccess: (result) => {
-  //     if (result) {
-  //       setNotes(result?.data)
-  //     }
-  //   }
-  // })
+  const { mutate } = useMutation();
 
   const handleSave = async () => {
-    // try {
-    const response = await mutate({ url: `/api/notes/edit/${editedNote.id}`, method: "PATCH", payload: editedNote });
-    console.log(" ini response ", response)
-    // console.log("editedNote.id => ", editedNote)
-    if (response?.success) {
-      onEditNoteSuccess();
+    try {
+      const response = await mutate({ url: `/api/notes/edit/${notes.id}`, method: "PATCH", payload: notes });
+      console.log(" ini response ", response)
+      // console.log("editedNote.id => ", editedNote)
+      if (response?.success) {
+        onEditNoteSuccess();
+      }
+    } catch (error) {
+      console.log("Error Update note => ", error)
     }
-    // else {
-    // }
-    // } catch (error) {
-    //   console.log("error yang sdg terjadi => ", error)
-    // }
     onClose();
   };
 
@@ -60,21 +51,21 @@ const EditModal = ({ isOpen, onClose, editingNote, onEditNoteSuccess }) => {
             <FormLabel>Title</FormLabel>
             <Input
               type='text'
-              value={editedNote?.title}
-              onChange={(event) => setEditedNote({ ...editedNote, title: event.target.value })}
+              value={notes?.title || ''}
+              onChange={(event) => setNotes({ ...notes, title: event.target.value })}
             />
           </FormControl>
           <FormControl mt={4}>
             <FormLabel>Description</FormLabel>
             <Textarea
-              value={editedNote?.description}
-              onChange={(event) => setEditedNote({ ...editedNote, description: event.target.value })}
+              value={notes?.description || ''}
+              onChange={(event) => setNotes({ ...notes, description: event.target.value })}
             />
           </FormControl>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={handleSave}>
-            Save
+            Update
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
         </ModalFooter>
