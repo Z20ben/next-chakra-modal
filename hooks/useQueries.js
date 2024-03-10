@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 
-export const useQueries = ({ prefixUrl = "" } = {}) => {
+export const useQueries = (
+  { prefixUrl = "" },
+  callback = {
+    onSuccess: () => { },
+  }
+) => {
+  const { onSuccess = () => { } } = callback;
   const [data, setData] = useState({
     data: null,
     isLoading: true,
@@ -16,11 +22,13 @@ export const useQueries = ({ prefixUrl = "" } = {}) => {
       const result = await (await fetch(url, {
         method,
       })).json();
+
       setData({
         ...data,
         data: result,
         isLoading: false,
-      })
+      });
+      onSuccess(result);
     } catch (error) {
       setData({
         ...data,
@@ -34,7 +42,7 @@ export const useQueries = ({ prefixUrl = "" } = {}) => {
     if (prefixUrl) {
       fetchingData({ url: prefixUrl })
     }
-  }, [])
+  }, [prefixUrl])
 
   return { ...data };
 }
