@@ -14,17 +14,30 @@ import {
   Input,
   Textarea
 } from "@chakra-ui/react";
+import { useMutation } from "@/hooks/useMutation";
 const LayoutComponent = dynamic(() => import("@/layout"))
 
-const AddModal = ({ isOpen, onClose }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+const AddModal = ({ isOpen, onClose, onAddNoteSuccess }) => {
+  const [notes, setNotes] = useState(
+    {
+      title: "",
+      description: "",
+    }
+  );
 
-  const handleSave = () => {
-    // Lakukan sesuatu dengan nilai judul dan deskripsi (misalnya: kirim ke server)
-    console.log("Judul:", title);
-    console.log("Deskripsi:", description);
-    // Setelah menyimpan, tutup modal
+  const { mutate } = useMutation();
+
+  const handleSave = async () => {
+    try {
+      const response = await mutate({ url: '/api/notes/add', payload: notes });
+      if (response?.success) {
+        onAddNoteSuccess();
+        // onSuccess(notes);
+        // router.push("/notes")
+      }
+    } catch (error) {
+      console.error("Error updating note:", error);
+    }
     onClose();
   };
 
@@ -37,14 +50,13 @@ const AddModal = ({ isOpen, onClose }) => {
         <ModalBody>
           <FormControl>
             <FormLabel>Judul</FormLabel>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Input type='text' onChange={(event) => setNotes({ ...notes, title: event.target.value })} />
           </FormControl>
           <FormControl mt={4}>
             <FormLabel>Deskripsi</FormLabel>
-            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Textarea onChange={(event) => setNotes({ ...notes, description: event.target.value })} />
           </FormControl>
         </ModalBody>
-
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={handleSave}>
             Save

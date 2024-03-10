@@ -22,6 +22,7 @@ export const useQueries = (
       const result = await (await fetch(url, {
         method,
       })).json();
+      console.log("ini useq result", data)
 
       setData({
         ...data,
