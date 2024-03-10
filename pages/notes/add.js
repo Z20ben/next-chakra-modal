@@ -24,18 +24,6 @@ export default function AddNotes({ }) {
     } catch (error) {
 
     }
-    // try {
-    //   const result = await (await fetch('/api/notes/add', {
-    //     method: 'POST',
-    //     body: JSON.stringify(notes)
-    //   })).json();
-    //   if (result?.success) {
-    //     router.push("/notes")
-    //   }
-    // } catch (error) {
-
-    // }
-
   }
 
   return (
@@ -59,11 +47,6 @@ export default function AddNotes({ }) {
             </GridItem>
           </Grid>
         </Card>
-        {/* {notes.data.map((item) => (
-          <div>
-            <Link href={`/notes/${item.id}`}>{item.title}</Link>
-          </div>
-        ))} */}
       </LayoutComponent>
 
     </>

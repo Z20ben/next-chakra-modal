@@ -14,8 +14,8 @@ export const useMutation = ({ } = {}) => {
     })
     try {
       const result = await (await fetch(url, {
-        method,
         body: JSON.stringify(payload),
+        method,
       })).json();
       setData({
         ...data,
